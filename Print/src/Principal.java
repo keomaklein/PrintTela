@@ -4,11 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.jnativehook.GlobalScreen;
@@ -29,6 +32,8 @@ public class Principal implements NativeMouseInputListener{
 	private JRadioButton rbt_mouse;
 	private JRadioButton rbt_edit_posicao;
 	private static boolean CHECK = false;
+	private JTextField txfCaminhoArquivo;
+	private static boolean mouseDentro;
 
 	/**
 	 * Launch the application.
@@ -67,7 +72,7 @@ public class Principal implements NativeMouseInputListener{
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(100, 100, 244, 332);
+		frame.setBounds(100, 100, 244, 362);
 		frame.getContentPane().setLayout(null);
 	
 		
@@ -77,8 +82,11 @@ public class Principal implements NativeMouseInputListener{
 				
 				if(!(txf_tempo_repeticao.getText().equals("") || txf_quantidade_print.getText().equals(""))){		
 					frame.setExtendedState(JFrame.ICONIFIED);
-	//				Thread t = new Thread(new Printador(0,0,300,300,10,10,"teste", "C:\\Users\\keoma\\Documents\\Pasta de Testes\\"));
-	//				t.start();
+					Thread t = new Thread(new Printador(Double.parseDouble(txf_posicao_X.getText()),Double.parseDouble(txf_posicao_Y.getText()),
+														Double.parseDouble(txf_tamanho_X.getText()),Double.parseDouble(txf_tamanho_X.getText()),
+														Double.parseDouble(txf_quantidade_print.getText()),Double.parseDouble(txf_tempo_repeticao.getText()),
+														"teste", txfCaminhoArquivo.getText() + "\\"));
+					t.start();
 					try {
 						Thread.sleep(1000 * Integer.parseInt(txf_tempo_repeticao.getText()) * Integer.parseInt(txf_quantidade_print.getText()));
 					} catch (InterruptedException e) {
@@ -88,7 +96,7 @@ public class Principal implements NativeMouseInputListener{
 				}
 			}
 		});
-		btn_printar.setBounds(10, 269, 218, 23);
+		btn_printar.setBounds(10, 299, 218, 23);
 		frame.getContentPane().add(btn_printar);
 		
         txf_posicao_X = new JtextFieldSomenteNumeros();
@@ -98,6 +106,14 @@ public class Principal implements NativeMouseInputListener{
         	public void mouseClicked(MouseEvent arg0) {
         		txf_posicao_X.selectAll();
         	}
+        	@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
+			}
         });
 		txf_posicao_X.setHorizontalAlignment(SwingConstants.RIGHT);
 		txf_posicao_X.setText("");
@@ -116,6 +132,14 @@ public class Principal implements NativeMouseInputListener{
 			public void mouseClicked(MouseEvent e) {
 				txf_posicao_X.selectAll();
 			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
+			}
 		});
 		txf_posicao_Y.setHorizontalAlignment(SwingConstants.RIGHT);
 		txf_posicao_Y.setText("");
@@ -131,6 +155,14 @@ public class Principal implements NativeMouseInputListener{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				txf_tamanho_X.selectAll();
+			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
 			}
 		});
 		txf_tamanho_X.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -148,6 +180,14 @@ public class Principal implements NativeMouseInputListener{
 			public void mouseClicked(MouseEvent e) {
 				txf_tamanho_Y.selectAll();
 			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
+			}
 		});
 		txf_tamanho_Y.setHorizontalAlignment(SwingConstants.RIGHT);
 		txf_tamanho_Y.setText("");
@@ -164,6 +204,14 @@ public class Principal implements NativeMouseInputListener{
 			public void mouseClicked(MouseEvent e) {
 				txf_tempo_repeticao.selectAll();
 			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
+			}
 		});
 		txf_tempo_repeticao.setHorizontalAlignment(SwingConstants.RIGHT);
 		txf_tempo_repeticao.setText("");
@@ -178,6 +226,14 @@ public class Principal implements NativeMouseInputListener{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				txf_quantidade_print.selectAll();
+			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
 			}
 		});
 		txf_quantidade_print.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -230,6 +286,48 @@ public class Principal implements NativeMouseInputListener{
 		});
 		rbt_edit_posicao.setBounds(10, 33, 180, 23);
 		frame.getContentPane().add(rbt_edit_posicao);
+		
+		txfCaminhoArquivo = new JTextField();
+		txfCaminhoArquivo.setBounds(10, 268, 196, 20);
+		frame.getContentPane().add(txfCaminhoArquivo);
+		txfCaminhoArquivo.setColumns(10);
+		
+		JButton btnCaminhoArquivo = new JButton("...");
+		btnCaminhoArquivo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				mouseDentro = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseDentro = false;
+			}
+		});
+		btnCaminhoArquivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+
+			    JFileChooser chooser = new JFileChooser();
+			    chooser.setCurrentDirectory(new java.io.File("."));
+			    chooser.setDialogTitle("choosertitle");
+			    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			    chooser.setAcceptAllFileFilterUsed(false);
+
+			    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			    	txfCaminhoArquivo.setText(chooser.getCurrentDirectory().getAbsolutePath());
+
+			    } else {
+			      System.out.println("No Selection ");
+			    }
+			    
+			}
+		});
+		btnCaminhoArquivo.setBounds(207, 266, 23, 23);
+		frame.getContentPane().add(btnCaminhoArquivo);
+		
+		JLabel lblCaminhoParaSalvar = new JLabel("Caminho para salvar as imagens");
+		lblCaminhoParaSalvar.setBounds(10, 254, 170, 14);
+		frame.getContentPane().add(lblCaminhoParaSalvar);
 	}
 	
 	
@@ -258,7 +356,6 @@ public class Principal implements NativeMouseInputListener{
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
-//		CapturaMouse3 captureMouse = new CapturaMouse3();
 		GlobalScreen.addNativeMouseListener(this);
 		GlobalScreen.addNativeMouseMotionListener(this);
 	}
@@ -270,13 +367,23 @@ public class Principal implements NativeMouseInputListener{
 	}
 
 	public void nativeMousePressed(NativeMouseEvent e) {
-		txf_posicao_X.setText(MouseInfo.getPointerInfo().getLocation().getX()+"");
-		txf_posicao_Y.setText(MouseInfo.getPointerInfo().getLocation().getY()+"");
+		if(rbt_mouse.isSelected() && !mouseDentro){
+			txf_posicao_X.setText(MouseInfo.getPointerInfo().getLocation().getX()+"");
+			txf_posicao_Y.setText(MouseInfo.getPointerInfo().getLocation().getY()+"");
+		}
 		//System.out.println("Mosue Pressed: " + e.getButton());
 	}
 
 	public void nativeMouseReleased(NativeMouseEvent e) {
 		//System.out.println("Mosue Released: " + e.getButton());
+		if(rbt_mouse.isSelected() && !mouseDentro){
+			if(MouseInfo.getPointerInfo().getLocation().getX() == Double.parseDouble(txf_posicao_X.getText()) &&
+					MouseInfo.getPointerInfo().getLocation().getY() == Double.parseDouble(txf_posicao_Y.getText())){
+				txf_tamanho_X.setText("0");
+				txf_tamanho_Y.setText("0");	
+			}
+			alterarCheck();
+		}
 	}
 
 	public void nativeMouseMoved(NativeMouseEvent e) {
@@ -284,10 +391,11 @@ public class Principal implements NativeMouseInputListener{
 	}
 
 	public void nativeMouseDragged(NativeMouseEvent e) {
-		txf_tamanho_X.setText(MouseInfo.getPointerInfo().getLocation().getX()-Double.parseDouble(txf_posicao_X.getText())+"");
-		txf_tamanho_Y.setText(MouseInfo.getPointerInfo().getLocation().getY()-Double.parseDouble(txf_posicao_Y.getText())+"");
+		if(rbt_mouse.isSelected() && !mouseDentro){
+			txf_tamanho_X.setText(MouseInfo.getPointerInfo().getLocation().getX()+"");
+			txf_tamanho_Y.setText(MouseInfo.getPointerInfo().getLocation().getY()+"");
+
+		}
 		//System.out.println("Mosue Dragged: " + e.getX() + ", " + e.getY());
 	}
-	
-	
 }
